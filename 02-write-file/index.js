@@ -5,11 +5,11 @@ const output = fs.createWriteStream(path.join(__dirname, 'output.txt'), 'utf-8')
 
 stdout.write('Hello! You can leave your message here\n');
 
-stdin.on('data', (data) => {
-    if(data === 'exit') {
+stdin.on('data', (chunk) => {
+    if(chunk.toString().trim() == 'exit') {
         process.exit();
     }
-    output.write(data);
+    output.write(chunk);
 });
 
 process.on('exit', (code) => {
