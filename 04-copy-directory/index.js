@@ -9,14 +9,16 @@ const { copyFile, mkdir, readdir } = require('fs/promises');
         for(const file of files) {
             try {
                 if(file.isDirectory()) {
-                    await mkdir(path.join(__dirname, 'files-copy', file.name), { recursive: true });
+                    let sourcePath = path.join(__dirname, 'files', file.name);
+                    let destinationPath = path.join(__dirname, 'files-copy', file.name);
+                    copyDir(sourcePath, destinationPath);
                 } else {
-                    await copyFile(path.join(__dirname, 'files', file.name), path.join(__dirname, 'files-copy', file.name), fs.constants.COPYFILE_EXCL);
+                    await copyFile(path.join(sourcePath, file.name), path.join(destinationPath, file.name), fs.constants.COPYFILE_EXCL);
                 }
             } catch(err) {
                 if(err.code == 'EEXIST') {
-                    fs.rm(path.join(__dirname, 'files-copy', file.name), () => {
-                        copyFile(path.join(__dirname, 'files', file.name), path.join(__dirname, 'files-copy', file.name));
+                    fs.rm(path.join(destinationPath, file.name), () => {
+                        copyFile(path.join(sourcePath, file.name), path.join(destinationPath, file.name));
                     });
                 } else {
                     console.error(err);
